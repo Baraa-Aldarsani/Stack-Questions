@@ -1,0 +1,44 @@
+name: stack_questions_app
+description: "A new Flutter project."
+
+publish_to: 'none' 
+
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  smash_toast_plugin:
+    git:
+      url: https://github.com/Baraa-Aldarsani/Smash-Toast-Plugin.git
+      ref: main 
+  # smash_toast_plugin:
+  #     path: ../New/smash_toast_plugin
+    
+
+  cupertino_icons: ^1.0.8
+  flutter_bloc: ^9.1.0
+  equatable: ^2.0.7
+  connectivity_plus: ^6.1.4
+  dio: ^5.8.0+1
+  http: ^1.3.0
+  sqflite: ^2.4.2
+  
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+
+  flutter_lints: ^5.0.0
+
+
+flutter:
+
+  uses-material-design: true
+
+
