@@ -49,14 +49,13 @@ class QuestionRemoteDataSourceImpl implements QuestionRemoteDataSource {
       final Uri url = Uri.parse(
         'https://api.stackexchange.com/2.3/questions?page=$page&pagesize=20&order=desc&sort=activity&site=stackoverflow&filter=withbody',
       );
-     
 
       final response = await client.get(url);
-
+      print(response.statusCode);
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
         final items = data['items'] as List;
-
+        print("📦 Decoded Data: $data");
         return items.map((json) => QuestionModel.fromJson(json)).toList();
       } else {
         throw Exception('Failed to load questions');

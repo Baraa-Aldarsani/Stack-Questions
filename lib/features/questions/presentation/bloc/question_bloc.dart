@@ -5,7 +5,7 @@ import 'question_event.dart';
 import 'question_state.dart';
 
 class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
-  final GetQuestions getQuestions;
+  final GetQuestionsUseCase getQuestions;
   int currentPage = 1;
   bool hasReachedMax = false;
   List<Question> allQuestions = [];

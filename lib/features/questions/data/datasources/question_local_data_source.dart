@@ -1,31 +1,29 @@
 import 'package:sqflite/sqflite.dart';
-import 'package:stack_questions_app/features/questions/data/model/question_model.dart';
+import '../../domain/entities/question.dart';
 
 abstract class QuestionLocalDataSource {
-  Future<void> cacheQuestions(List<QuestionModel> questions);
-  Future<List<QuestionModel>> getCachedQuestions();
+  Future<List<Question>> getCachedQuestions();
+  Future<void> cacheQuestions(List<Question> questions);
 }
 
 class QuestionLocalDataSourceImpl implements QuestionLocalDataSource {
   final Database database;
+
   QuestionLocalDataSourceImpl(this.database);
 
   @override
-  Future<void> cacheQuestions(List<QuestionModel> questions) async {
-    final batch = database.batch();
-    for (final question in questions) {
-      batch.insert(
-        'Questions',
-        question.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    }
-    await batch.commit(noResult: true);
+  Future<List<Question>> getCachedQuestions() async {
+    final List<Map<String, dynamic>> maps = await database.query('Questions');
+    return maps.map((map) => Question.fromJson(map)).toList();
   }
 
   @override
-  Future<List<QuestionModel>> getCachedQuestions() async {
-    final maps = await database.query('Questions');
-    return maps.map((map) => QuestionModel.fromMap(map)).toList();
+  Future<void> cacheQuestions(List<Question> questions) async {
+    final batch = database.batch();
+    await database.delete('Questions');
+    for (var question in questions) {
+      batch.insert('Questions', question.toJson());
+    }
+    await batch.commit(noResult: true);
   }
 }

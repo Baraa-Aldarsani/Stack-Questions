@@ -17,16 +17,21 @@ class QuestionRepositoryImpl implements QuestionRepository {
   });
 
   @override
-  Future<List<Question>> getQuestions({int page = 1}) async {
-    if (await networkInfo.isConnected) {
+Future<List<Question>> getQuestions({int page = 1}) async {
+  if (await networkInfo.isConnected) {
+    try {
       final remoteQuestions = await remoteDataSource.getQuestions(page: page);
-      await localDataSource.cacheQuestions(remoteQuestions);
+      if (page == 1) {
+        await localDataSource.cacheQuestions(remoteQuestions);
+      }
       return remoteQuestions;
-    } else {
-      final cachedQuestions = await localDataSource.getCachedQuestions();
-      return cachedQuestions.isEmpty
-          ? await remoteDataSource.getQuestions(page: page)
-          : cachedQuestions;
+    } catch (e) {
+      print('Network error: $e, loading from cache...');
+      return await localDataSource.getCachedQuestions();
     }
+  } else {
+    print('No internet, loading from cache...');
+    return await localDataSource.getCachedQuestions();
   }
+}
 }

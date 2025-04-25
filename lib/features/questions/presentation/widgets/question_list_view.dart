@@ -17,23 +17,28 @@ class QuestionListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener<ScrollNotification>(
-      onNotification: (scrollInfo) {
-        if (!hasReachedMax &&
-            scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-          context.read<QuestionBloc>().add(LoadMoreQuestionsEvent());
-        }
-        return false;
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.read<QuestionBloc>().add(FetchQuestionsEvent());
       },
-      child: ListView.separated(
-        itemCount: questions.length + (hasReachedMax ? 0 : 1),
-        separatorBuilder: (_, __) => const Divider(),
-        itemBuilder: (context, index) {
-          if (index == questions.length) {
-            return const Center(child: CircularProgressIndicator());
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (scrollInfo) {
+          if (!hasReachedMax &&
+              scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+            context.read<QuestionBloc>().add(LoadMoreQuestionsEvent());
           }
-          return QuestionCard(question: questions[index], index: index);
+          return false;
         },
+        child: ListView.separated(
+          itemCount: questions.length + (hasReachedMax ? 0 : 1),
+          separatorBuilder: (_, __) => const Divider(),
+          itemBuilder: (context, index) {
+            if (index == questions.length) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return QuestionCard(question: questions[index], index: index);
+          },
+        ),
       ),
     );
   }
